@@ -1,0 +1,11 @@
+/.vscode/
+/pkg/
+/src/
+
+ReadCat-*/
+ReadCat-*.tar.gz
+read-cat-*.pkg.tar.*
+read-cat.db
+read-cat.db.tar.*
+read-cat.files
+read-cat.files.tar.*

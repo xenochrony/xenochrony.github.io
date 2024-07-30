@@ -1,0 +1,49 @@
+# Maintainer: easterNday <849919718@qq.com>
+
+pkgname=read-cat-insiders
+_pkgname=ReadCat
+pkgver=1.0.0
+_pkgsubver=dev.240707
+pkgrel=1
+_nodeversion=20.15.0
+epoch=
+pkgdesc="一款免费、开源、简洁、纯净、无广告的小说阅读器"
+arch=('x86_64')
+url="https://read-cat.top/"
+license=('GPL')
+groups=()
+depends=()
+makedepends=()
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+
+source=("ReadCat.desktop" "read-cat.png")
+source_x86_64=("https://github.com/read-cat/read-cat/releases/download/v1.0.0-dev.240707/ReadCat-linux-x64-1.0.0-dev.f6f397a3.tar.gz")
+noextract=()
+sha256sums=(SKIP SKIP)
+sha256sums_x86_64=(SKIP)
+validpgpkeys=()
+
+shopt -s extglob
+
+package() {
+  install -d -m755 "${pkgdir}/opt/${pkgname}"
+  install -d -m755 "${pkgdir}/usr/bin"
+  install -d -m755 "${pkgdir}/usr/share/"{applications,pixmaps}
+  cp -r "${srcdir}"/!(vscodium-bin?(-url-handler).desktop|${_pkgname}-linux-@(x|arm)64-${pkgver}-${_pkgsubver}.tar.gz)/* "${pkgdir}/opt/${pkgname}"
+  ln -s "/opt/${pkgname}/bin/read-cat-insiders" "${pkgdir}/usr/bin/read-cat-insiders"
+  install -D -m644 "${srcdir}/ReadCat.desktop" "${pkgdir}/usr/share/applications/ReadCat.desktop"
+  install -D -m644 "${srcdir}/read-cat.png" \
+          "${pkgdir}/usr/share/pixmaps/read-cat.png"
+
+  # # Fix chrome-sandbox permissions
+  chown root "${pkgdir}/opt/${pkgname}/chrome-sandbox"
+  chmod 4755 "${pkgdir}/opt/${pkgname}/chrome-sandbox"
+}
