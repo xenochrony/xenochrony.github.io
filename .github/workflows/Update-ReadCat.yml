@@ -1,0 +1,68 @@
+name: Update ReadCat
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */1 * * *"
+
+jobs:
+  prepare:
+    name: Get upstream release info
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.get-basic-info.outputs.release }}
+      pkgver: ${{ steps.get-basic-info.outputs.pkgver }}
+      subver: ${{ steps.get-basic-info.outputs.subver }}
+      source: ${{ steps.get-basic-info.outputs.source }}
+      sha256sums: ${{ steps.get-basic-info.outputs.sha256sums }}
+    steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Get basic info
+        id: get-basic-info
+        run: |
+          RELEASE_INFO=$(curl -s https://api.github.com/repos/read-cat/read-cat/releases | jq -M '.[0].assets[] | select(.browser_download_url | test("linux-x64"))' | jq -cs '.')
+          TAG_INFO=$(curl -s https://api.github.com/repos/read-cat/read-cat/releases | jq -r '.[0].tag_name')
+          TAG_INFO=${TAG_INFO#v}
+          read MAJOR_VERSION SUB_VERSION <<< $(echo $TAG_INFO | awk -F '[-]' '{print $1,$2}')
+          echo "release=$RELEASE_INFO" >> "$GITHUB_OUTPUT"
+          echo "pkgver=$MAJOR_VERSION" >> "$GITHUB_OUTPUT"
+          echo "subver=$SUB_VERSION" >> "$GITHUB_OUTPUT"
+          DOWNLOAD_URLS=$(echo $RELEASE_INFO | jq -r '.[].browser_download_url')
+          for url in $DOWNLOAD_URLS; do
+            if [[ $url == *".sha256.txt" ]]; then
+              echo "sha256sums=$(curl -sL $url | grep -v '^$' | head -n 1)" >> "$GITHUB_OUTPUT"
+            else
+              echo "source=$url" >> "$GITHUB_OUTPUT"
+            fi
+          done
+
+  edit-pkgbuild:
+    needs: prepare
+    name: Edit PKGBUILD and push
+    runs-on: ubuntu-latest
+    env:
+      PKG_VER: ${{ needs.prepare.outputs.pkgver }}
+      PKG_SUB_VER: ${{ needs.prepare.outputs.subver }}
+      SOURCE: ${{ needs.prepare.outputs.source }}
+      SHA256: ${{ needs.prepare.outputs.sha256sums }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update version
+        id: bump-version
+        working-directory: x86_64/read-cat-insiders
+        run: |
+          sed -i "s/pkgver=.*$/pkgver=${PKG_VER}/" PKGBUILD
+          sed -i "s/_pkgsubver=.*$/_pkgsubver=${PKG_SUB_VER}/" PKGBUILD
+          sed -i "s|source_x86_64=.*|source_x86_64=('${SOURCE}')|" PKGBUILD
+          sed -i "s|sha256sums_x86_64=.*|sha256sums_x86_64=('${SHA256}')|" PKGBUILD
+          cat PKGBUILD
+      - name: Build package and update .SRCINFO
+        uses: 2m/arch-pkgbuild-builder@main
+        with:
+          target: 'pkgbuild'
+          pkgname: 'x86_64/read-cat-insiders'
