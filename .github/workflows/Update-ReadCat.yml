@@ -68,6 +68,13 @@ jobs:
           sed -i "s|source_x86_64=.*|source_x86_64=('${SOURCE}')|" PKGBUILD
           sed -i "s|sha256sums_x86_64=.*|sha256sums_x86_64=('${SHA256}')|" PKGBUILD
           cat PKGBUILD
+      - name: Generate .SRCINFO
+        working-directory: read-cat-insiders-bin
+        run: |
+          useradd builder -m
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+          chmod -R a+rw .
+          sudo -Eu builder makepkg --printsrcinfo > .SRCINFO
       - name: Upload PKGBUILD artefact
         uses: actions/upload-artifact@v4
         with:
@@ -78,13 +85,6 @@ jobs:
         with:
           name: .SRCINFO
           path: read-cat-insiders-bin/.SRCINFO
-      - name: Generate .SRCINFO
-        working-directory: read-cat-insiders-bin
-        run: |
-          useradd builder -m
-          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          chmod -R a+rw .
-          sudo -Eu builder makepkg --printsrcinfo > .SRCINFO
       - name: Build package
         uses: 2m/arch-pkgbuild-builder@main
         with:
