@@ -9,3 +9,5 @@ read-cat.db
 read-cat.db.tar.*
 read-cat.files
 read-cat.files.tar.*
+
+*.png

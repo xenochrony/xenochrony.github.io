@@ -60,7 +60,7 @@ jobs:
           pacman -Syu --noconfirm --noprogressbar --needed base-devel git tree
       - name: Update version
         id: bump-version
-        working-directory: x86_64/read-cat-insiders
+        working-directory: read-cat-insiders-bin
         run: |
           sed -i "s/pkgver=.*$/pkgver=${PKG_VER}/" PKGBUILD
           sed -i "s/_pkgsubver=.*$/_pkgsubver=${PKG_SUB_VER}/" PKGBUILD
@@ -71,14 +71,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PKGBUILD
-          path: x86_64/read-cat-insiders/PKGBUILD
+          path: read-cat-insiders-bin/PKGBUILD
       - name: Upload .SRCINFO artefact
         uses: actions/upload-artifact@v4
         with:
           name: .SRCINFO
-          path: x86_64/read-cat-insiders/.SRCINFO
+          path: read-cat-insiders-bin/.SRCINFO
       - name: Generate .SRCINFO
-        working-directory: x86_64/read-cat-insiders
+        working-directory: read-cat-insiders-bin
         run: |
           useradd builder -m
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -88,7 +88,7 @@ jobs:
         uses: 2m/arch-pkgbuild-builder@main
         with:
           target: pkgbuild
-          pkgname: "x86_64/read-cat-insiders"
+          pkgname: "read-cat-insiders-bin"
 
   update-pkgbuild:
     name: Update PKGBUILD
@@ -103,14 +103,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: PKGBUILD
-          path: x86_64/read-cat-insiders/
+          path: read-cat-insiders-bin/
       - name: Download .SRCINFO artefact
         uses: actions/download-artifact@v4
         with:
           name: .SRCINFO
-          path: x86_64/read-cat-insiders/
+          path: read-cat-insiders-bin/
       - name: Push update
-        working-directory: x86_64/read-cat-insiders
+        working-directory: read-cat-insiders-bin
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
