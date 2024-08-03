@@ -1,0 +1,15 @@
+pkgbase = read-cat-insiders-bin
+	pkgdesc = 一款免费、开源、简洁、纯净、无广告的小说阅读器
+	pkgver = 1.0.0
+	pkgrel = 1
+	url = https://read-cat.top/
+	arch = x86_64
+	license = GPL
+	source = https://github.com/UnicomStudio/Pkg_ReadCat/raw/main/ReadCat.desktop
+	source = https://raw.githubusercontent.com/read-cat/read-cat/main/public/icons/512x512.png
+	sha256sums = SKIP
+	sha256sums = SKIP
+	source_x86_64 = https://github.com/read-cat/read-cat/releases/download/v1.0.0-dev.240707/ReadCat-linux-x64-1.0.0-dev.240707.tar.gz
+	sha256sums_x86_64 = SKIP
+
+pkgname = read-cat-insiders-bin

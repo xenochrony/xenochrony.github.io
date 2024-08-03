@@ -23,10 +23,10 @@ install=
 changelog=
 
 source=("https://github.com/UnicomStudio/Pkg_ReadCat/raw/main/ReadCat.desktop" "https://raw.githubusercontent.com/read-cat/read-cat/main/public/icons/512x512.png")
-source_x86_64=("https://github.com/read-cat/read-cat/releases/download/v${pkgver}-${_pkgsubver}/ReadCat-linux-x64-${pkgver}-${_pkgsubver}.tar.gz")
+source_x86_64=('https://github.com/read-cat/read-cat/releases/download/v1.0.0-dev.240707/ReadCat-linux-x64-1.0.0-dev.f6f397a3.tar.gz')
 noextract=()
 sha256sums=(SKIP SKIP)
-sha256sums_x86_64=(SKIP)
+sha256sums_x86_64=('08259b53a11adc78f5b3cdbb55efb3282bcad3182d59c76e673832fa27c087fa')
 validpgpkeys=()
 
 shopt -s extglob
