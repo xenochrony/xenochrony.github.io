@@ -51,6 +51,7 @@ jobs:
       PKG_SUB_VER: ${{ needs.prepare.outputs.subver }}
       SOURCE: ${{ needs.prepare.outputs.source }}
       SHA256: ${{ needs.prepare.outputs.sha256sums }}
+      ARCH_PKG_NAME: read-cat-insiders-bin-${{ needs.prepare.outputs.pkgver }}-1-x86_64.pkg.tar.zst
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,6 +90,11 @@ jobs:
         with:
           target: pkgbuild
           pkgname: "read-cat-insiders-bin"
+      - name: Upload package artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARCH_PKG_NAME}}
+          path: read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}}
 
   update-pkgbuild:
     name: Update PKGBUILD
