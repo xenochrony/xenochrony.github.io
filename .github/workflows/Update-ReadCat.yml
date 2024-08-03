@@ -58,13 +58,6 @@ jobs:
       - name: Install dependencies and update
         run:
           pacman -Syu --noconfirm --noprogressbar --needed base-devel git tree
-      - name: Generate .SRCINFO
-        working-directory: x86_64/read-cat-insiders
-        run: |
-          useradd builder -m
-          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-          chmod -R a+rw .
-          sudo -Eu builder makepkg --printsrcinfo > .SRCINFO
       - name: Update version
         id: bump-version
         working-directory: x86_64/read-cat-insiders
@@ -84,10 +77,17 @@ jobs:
         with:
           name: .SRCINFO
           path: x86_64/read-cat-insiders/.SRCINFO
+      - name: Generate .SRCINFO
+        working-directory: x86_64/read-cat-insiders
+        run: |
+          useradd builder -m
+          echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+          chmod -R a+rw .
+          sudo -Eu builder makepkg --printsrcinfo > .SRCINFO
       - name: Build package
         uses: 2m/arch-pkgbuild-builder@main
         with:
-          target: "pkgbuild"
+          target: pkgbuild
           pkgname: "x86_64/read-cat-insiders"
 
   update-pkgbuild:
