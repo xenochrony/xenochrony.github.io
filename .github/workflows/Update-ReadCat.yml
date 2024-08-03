@@ -58,7 +58,7 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies and update
         run:
-          pacman -Syu --noconfirm --noprogressbar --needed base-devel git tree
+          pacman -Syu --noconfirm --noprogressbar --needed base-devel git pacman-contrib
       - name: Update version
         id: bump-version
         working-directory: read-cat-insiders-bin
@@ -75,6 +75,16 @@ jobs:
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
           chmod -R a+rw .
           sudo -Eu builder makepkg --printsrcinfo > .SRCINFO
+      - name: Build package
+        uses: 2m/arch-pkgbuild-builder@main
+        with:
+          target: pkgbuild
+          pkgname: "read-cat-insiders-bin"
+      - name: Generate package sha256sums
+        working-directory: read-cat-insiders-bin
+        run: |
+          chmod -R a+rw .
+          sudo -Eu builder updpkgsums
       - name: Upload PKGBUILD artefact
         uses: actions/upload-artifact@v4
         with:
@@ -85,11 +95,6 @@ jobs:
         with:
           name: .SRCINFO
           path: read-cat-insiders-bin/.SRCINFO
-      - name: Build package
-        uses: 2m/arch-pkgbuild-builder@main
-        with:
-          target: pkgbuild
-          pkgname: "read-cat-insiders-bin"
       - name: Upload package artefact
         uses: actions/upload-artifact@v4
         with:
