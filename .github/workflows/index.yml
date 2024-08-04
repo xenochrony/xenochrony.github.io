@@ -21,7 +21,7 @@ jobs:
       - name: Create repo files
         run: |
           mkdir -p x86_64
-          find x86_64 -name "*.pkg.*" -exec repo-add -R x86_64/unicom-studio.db.tar.gz x86_64/{} \;
+          find x86_64 -name "*.pkg.*" -exec repo-add -R x86_64/unicom-studio.db.tar.gz {} \;
       - name: Generate index
         run: |
           for DIR in $(find "." -not -path "./.git/*" -type d); do

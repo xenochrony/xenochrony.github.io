@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/**'
+      - '**/PKGBUILD'
+      - '**/*.desktop'
   workflow_dispatch:
   schedule:
     - cron: "0 */1 * * *"
