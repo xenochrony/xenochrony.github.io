@@ -41,7 +41,7 @@ jobs:
             fi
           done
 
-  edit-pkgbuild:
+  build-pkgbuild:
     needs: prepare
     name: Edit PKGBUILD and push
     runs-on: ubuntu-latest
@@ -100,10 +100,33 @@ jobs:
         with:
           name: ${{ env.ARCH_PKG_NAME}}
           path: read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}}
+      - name: Create repo files
+        run: |
+          mkdir -p dist/read-cat-insiders-bin
+          mv read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}} dist/read-cat-insiders-bin
+          repo-add -R dist/unicom.db.tar.gz dist/read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}}
+      - name: Generate index
+        run: |
+          for DIR in $(find "." -path "./.git" -prune -o -type d); do
+            {
+              echo -e '<html>\n<body>\n<h1>Directory listing</h1>\n<hr/>\n<pre>'
+              ls -1pa -I.git "$DIR" | grep -v "^\./$" | grep -v "^index\.html$" | awk '{ printf "<a href=\"%s\">%s</a>\n",$1,$1 }'
+              echo -e '</pre>\n</body>\n</html>'
+            } > "$DIR"/index.html
+          done
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          user_name: "github-actions[bot]"
+          user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          commit_message: Deploy commit
+          force_orphan: true
 
   update-pkgbuild:
     name: Update PKGBUILD
-    needs: [prepare, edit-pkgbuild]
+    needs: [prepare, build-pkgbuild]
     runs-on: ubuntu-latest
     env:
       PKG_VER: ${{ needs.prepare.outputs.pkgver }}
