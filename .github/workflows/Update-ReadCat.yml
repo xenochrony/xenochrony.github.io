@@ -100,12 +100,17 @@ jobs:
         with:
           name: ${{ env.ARCH_PKG_NAME}}
           path: read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}}
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: dist
       - name: Move to repo
         run: |
-          mkdir -p dist/x86_64/read-cat-insiders-bin
-          mv read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}} dist/x86_64/read-cat-insiders-bin
+          mkdir -p dist/x86_64/
+          mv -f read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}} dist/x86_64/
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
