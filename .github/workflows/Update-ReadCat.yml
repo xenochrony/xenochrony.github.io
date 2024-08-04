@@ -55,7 +55,7 @@ jobs:
       PKG_SUB_VER: ${{ needs.prepare.outputs.subver }}
       SOURCE: ${{ needs.prepare.outputs.source }}
       SHA256: ${{ needs.prepare.outputs.sha256sums }}
-      ARCH_PKG_NAME: read-cat-insiders-bin-${{ needs.prepare.outputs.pkgver }}-1-x86_64.pkg.tar.zst
+      ARCH_PKG_NAME: read-cat-insiders-${{ needs.prepare.outputs.pkgver }}-1-x86_64.pkg.tar.zst
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,7 +65,7 @@ jobs:
           pacman -Syu --noconfirm --noprogressbar --needed base-devel git pacman-contrib
       - name: Update version
         id: bump-version
-        working-directory: read-cat-insiders-bin
+        working-directory: read-cat-insiders
         run: |
           sed -i "s/pkgver=.*$/pkgver=${PKG_VER}/" PKGBUILD
           sed -i "s/_pkgsubver=.*$/_pkgsubver=${PKG_SUB_VER}/" PKGBUILD
@@ -73,7 +73,7 @@ jobs:
           sed -i "s|sha256sums_x86_64=.*|sha256sums_x86_64=('${SHA256}')|" PKGBUILD
           cat PKGBUILD
       - name: Generate .SRCINFO
-        working-directory: read-cat-insiders-bin
+        working-directory: read-cat-insiders
         run: |
           useradd builder -m
           echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -83,9 +83,9 @@ jobs:
         uses: 2m/arch-pkgbuild-builder@main
         with:
           target: pkgbuild
-          pkgname: "read-cat-insiders-bin"
+          pkgname: "read-cat-insiders"
       - name: Generate package sha256sums
-        working-directory: read-cat-insiders-bin
+        working-directory: read-cat-insiders
         run: |
           chmod -R a+rw .
           sudo -Eu builder updpkgsums
@@ -93,17 +93,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PKGBUILD
-          path: read-cat-insiders-bin/PKGBUILD
+          path: read-cat-insiders/PKGBUILD
       - name: Upload .SRCINFO artefact
         uses: actions/upload-artifact@v4
         with:
           name: .SRCINFO
-          path: read-cat-insiders-bin/.SRCINFO
+          path: read-cat-insiders/.SRCINFO
       - name: Upload package artefact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARCH_PKG_NAME}}
-          path: read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}}
+          path: read-cat-insiders/${{ env.ARCH_PKG_NAME}}
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -112,8 +112,8 @@ jobs:
       - name: Move to repo
         run: |
           mkdir -p dist/x86_64/
-          mv -f read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}} dist/x86_64/
-          mv -f read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}}.sig dist/x86_64/
+          mv -f read-cat-insiders/${{ env.ARCH_PKG_NAME}} dist/x86_64/
+          mv -f read-cat-insiders/${{ env.ARCH_PKG_NAME}}.sig dist/x86_64/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -137,14 +137,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: PKGBUILD
-          path: read-cat-insiders-bin/
+          path: read-cat-insiders/
       - name: Download .SRCINFO artefact
         uses: actions/download-artifact@v4
         with:
           name: .SRCINFO
-          path: read-cat-insiders-bin/
+          path: read-cat-insiders/
       - name: Push update
-        working-directory: read-cat-insiders-bin
+        working-directory: read-cat-insiders
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"

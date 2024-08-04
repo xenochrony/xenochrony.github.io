@@ -1,5 +1,5 @@
 # Maintainer: easterNday <849919718@qq.com>
-pkgname=read-cat-insiders-bin
+pkgname=read-cat-insiders
 _pkgname=ReadCat
 pkgver=1.0.0
 _pkgsubver=dev.240707
