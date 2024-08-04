@@ -1,6 +1,27 @@
-# ArchLinux Repo for easterNday
+<div align = center>
 
-## Credits
+<img src="https://avatars.githubusercontent.com/u/172346054?s=200&v=4" width="100" height="100" alt="banner">
+
+<h1>Unicom Studio Repositories for ArchLinux</h1>
+<br>
+
+更加适合中国宝宝体质的 ArchLinux 项目仓库，持续开发中……
+<br>
+
+---
+</div>
+
+## 使用方法
+
+Add the following to `/etc/pacman.conf`:
+
+```toml
+[unicom-studio]
+Server = https://unicomstudio.github.io/Repositories/$arch
+SigLevel = Never
+```
+
+## 致谢
 
 - [Create Personal Arch Linux Package Repository via GitHub Pages](https://www.sainnhe.dev/post/create-personal-arch-linux-package-repository/)
 - [AUR打包指北](https://zhangjk98.xyz/create-aur-packages/)
