@@ -3,8 +3,10 @@ name: Update repo index (x86_64)
 on:
   push:
     branches:
-      - gh-pages
+      - "gh-pages"
   workflow_dispatch:
+  schedule:
+    - cron: "45 */1 * * *"
 
 jobs:
   update-index:
@@ -21,6 +23,7 @@ jobs:
       - name: Create repo files
         run: |
           mkdir -p x86_64
+          rm -rf x86_64/unicom-studio.*
           find x86_64 -name "*.pkg.*" -exec repo-add -R x86_64/unicom-studio.db.tar.gz {} \;
       - name: Generate index
         run: |
