@@ -113,6 +113,7 @@ jobs:
         run: |
           mkdir -p dist/x86_64/
           mv -f read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}} dist/x86_64/
+          mv -f read-cat-insiders-bin/${{ env.ARCH_PKG_NAME}}.sig dist/x86_64/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
