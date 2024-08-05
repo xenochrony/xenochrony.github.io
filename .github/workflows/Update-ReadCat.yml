@@ -156,3 +156,33 @@ jobs:
             git commit -m "🐎 ci(ReadCat): Update to v${PKG_VER}_${PKG_SUB_VER}"
             git push
           fi
+
+  update-aur:
+    name: Update AUR
+    needs: [prepare, build-pkgbuild]
+    runs-on: ubuntu-latest
+    env:
+      PKG_VER: ${{ needs.prepare.outputs.pkgver }}
+      PKG_SUB_VER: ${{ needs.prepare.outputs.subver }}
+    steps:
+      - name: Prepare for AUR
+        run: |
+          git config --global user.name "easterNday"
+          git config --global user.email "849919718@qq.com"
+
+          mkdir -p aur && cd aur
+      - name: Download PKGBUILD artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: PKGBUILD
+          path: aur/
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2
+        with:
+          pkgname: read-cat-insiders
+          pkgbuild: ./aur/PKGBUILD
+          commit_username: 'easterNday'
+          commit_email: '849919718@qq.com'
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Update AUR package
+          ssh_keyscan_types: rsa,ecdsa,ed25519
